@@ -2,6 +2,7 @@
 '' by Gavin T. Garner
 '' University of Virginia
 '' April 20, 2012
+'' test
 {  This object can be used to control a Red-Green-Blue LED light strip (such as the 1m and 2m 
    ones available from Pololu.com as parts #2540 and #2541). These strips incorporate TM1804 chips by
    Titan Micro (one for each RGB LED) and 24-bit color data is shifted into them using quick pulses
@@ -51,7 +52,8 @@ VAR
   long cog              'Store cog # (so that the cog can be stopped)                                
   long LEDs             'Stores the total number of addressable LEDs
   long lights[256]      'Reserve a long for each LED address in the string                           
-             '  THIS WILL NEED TO BE INCREASED IF YOU ARE CONTROLLING MORE THAN 256 LEDs!!!
+             ' THIS WILL NEED TO BE INCREASED IF YOU ARE CONTROLLING MORE THAN 256 LEDs!!!
+  word x_locations[16]
 PUB start(OutputPin,NumberOfLEDs) : okay
 '' Starts RGB LED Strip driver on a cog, returns false if no cog available
 '' Note: Requires at least a 20MHz system clock
@@ -78,6 +80,32 @@ PUB stop                                ''Stops the RGB LED Strip driver and rel
 PUB LED(LEDaddress,color)               ''Changes the color of an LED at a specific address 
   lights[LEDaddress]:=color
   update:=true
+
+PUB LED_X(LEDaddress,color,waittime) | i
+  x_locations[0] := 0
+  x_locations[1] := 14
+  x_locations[2] := 13
+  x_locations[3] := 19
+  x_locations[4] := 27
+  x_locations[5] := 37
+  x_locations[6] := 38
+  x_locations[7] := 40
+  x_locations[8] := 47
+  x_locations[9] := 33
+  x_locations[10] := 34
+  x_locations[11] := 28
+  x_locations[12] := 20
+  x_locations[13] := 10
+  x_locations[14] := 9
+  x_locations[15] := 7
+  i := 0
+
+  repeat i from 0 to 15
+    lights[LEDaddress + x_locations[i]]:=color
+    update:=true
+    waitcnt(cnt + (clkfreq / waittime))
+
+
 
 PUB LEDRGB(LEDaddress,_red,_green,_blue) ''Changes RGB values of an LED at a specific address 
   lights[LEDaddress]:=_red<<16+_green<<8+_blue

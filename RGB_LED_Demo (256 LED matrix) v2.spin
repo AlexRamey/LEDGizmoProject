@@ -17,11 +17,28 @@ OBJ
 PUB Demo | i, j, x, maxAddress
   rgb.start(0,TotalLEDs)          'Start up RGB LED driver on a new cog, set data pin to be P0,   
                                   ' and specify that there are 60 LEDs in the strip (2 meters)
-  maxAddress:=TotalLEDs-1         'LED addresses start with zero so 59 will be the maximum address
+  maxAddress:=TotalLEDs-1
+
+         'LED addresses start with zero so 59 will be the maximum address
+
 repeat
-  rgb.AllOff                      'You can turn off all of the LEDs at once
+  {
+  rgb.LED(1,rgb.Intensity(rgb#orange,64))
   waitcnt(clkfreq+cnt)
-  {                                'ROYGBIV Rainbow demo
+  rgb.LED(1,rgb.Intensity(rgb#blue,64))
+  waitcnt(clkfreq+cnt)
+  }
+  rgb.AllOff
+  waitcnt(clkfreq + cnt)
+  rgb.LED_X(0,rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+
+
+repeat
+  rgb.AllOff
+{                    'You can turn off all of the LEDs at once
+  waitcnt(clkfreq+cnt)
+                                 'ROYGBIV Rainbow demo
   rgb.LED(0,rgb#red)              'You can set a specific LED address to a predefined color         
   rgb.LED(1,rgb#orange)           ' Note that you can access predefined constants from within my
   rgb.LED(2,rgb#yellow)           ' RGB_LED_Strip object using the "rgb" alias and # sign
@@ -30,7 +47,7 @@ repeat
   rgb.LED(5,rgb#indigo)
   rgb.LED(6,rgb#violet)
   waitcnt(clkfreq+cnt)     
-                                  'You can also set the 8-bit RGB color values manually
+                               'You can also set the 8-bit RGB color values manually
   rgb.LED(7,255<<16)              'Set color to green=255 (red=blue=0) 
   rgb.LED(8,255<<8)               'Set color to red=255 (green=blue=0)
   rgb.LED(9,255)                  'Set color to blue=255 (green=red=0)
@@ -60,7 +77,7 @@ repeat
   waitcnt(clkfreq/2+cnt)
   rgb.SetAllColors(rgb.Intensity(rgb#blue,128))
   waitcnt(clkfreq/2+cnt)
-  }
+
                                   'Now you are ready to start making fancy patterns...
   rgb.AllOff                                
   x:=8
@@ -147,7 +164,7 @@ repeat
         rgb.LEDRGB(i,x,255-x,j)
         rgb.LEDRGB(i+1,x,255-x,255-j)
       waitcnt(clkfreq/30+cnt)
-    
+}
 {Copyright (c) 2012 Gavin Garner, University of Virginia                                                                              
 MIT License: Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated             
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the                   
