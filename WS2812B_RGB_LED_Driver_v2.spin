@@ -53,20 +53,7 @@ VAR
   long LEDs             'Stores the total number of addressable LEDs
   long lights[256]      'Reserve a long for each LED address in the string                           
              ' THIS WILL NEED TO BE INCREASED IF YOU ARE CONTROLLING MORE THAN 256 LEDs!!!
-  word a_locations[20]
-  word b_locations[30]
-  word c_locations[18]
-  word d_locations[20]
-  word e_locations[28]
-  word f_locations[18]
-  word g_locations[23]
-  word h_locations[24]
-  word i_locations[24]
-  word j_locations[16]
-  word k_locations[18]
-  word l_locations[13]
-  word m_locations[20]
-  word n_locations[26]
+
 PUB start(OutputPin,NumberOfLEDs) : okay
 '' Starts RGB LED Strip driver on a cog, returns false if no cog available
 '' Note: Requires at least a 20MHz system clock
