@@ -94,6 +94,10 @@ PUB LED(LEDaddress,color)               ''Changes the color of an LED at a speci
   lights[LEDaddress]:=color
   update:=true
 
+'' PARAMS: 'letter' is case-insensitive ASCII character ex. "A" or "a"
+'' PARAMS: 'baseAddress' is the cell # of the top left LED in the 6x8(WxH) square of the letter. The Font assumes letters are 6 columns wide
+'' PARAMS: 'color' is the color to make the letter
+'' PARAMS: 'speed' is how fast to draw the letter. Values may range from [0,100], where 100 is max speed. Specifying 0 makes the letter appear all at once.
 PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, offset
   
   '' Map the ASCII letter value to an alphabet index [0,26]
@@ -104,8 +108,11 @@ PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, off
   else                                      '' invalid input
     return 0.0
 
+  '' Use the alphabet index to lookup how long the list of positions is for 'letter'
   ''                              A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z
   length := lookupz(letterNumber: 20, 30, 18, 20, 28, 18, 23, 24, 24, 16, 18, 13, 20, 24, 20, 26, 19, 30, 26, 24, 16, 16, 22, 16, 16, 18)
+
+  '' Draw 'letter', taking 'speed' PARAM into account
   repeat i from 0 to (length - 1)
     case (letter)
       "a", "A": offset := lookupz(i: 7, 6, 5, 11, 12, 13, 17, 16, 31, 30, 34, 35, 36, 42, 41, 40, 10, 21, 26, 37)
@@ -136,8 +143,13 @@ PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, off
       "z", "Z": offset := lookupz(i: 0, 15, 16, 31, 32, 47, 46, 34, 28, 20, 10, 6, 7, 8, 23, 24, 39, 40)
 
     lights[baseAddress + offset]:=color
-    update:=true
-    waitcnt(cnt + (clkfreq / speed))
+
+    if (speed > 0) AND (speed =< 100)
+      '' Only wait if speed != 0
+      update:=true
+      waitcnt(cnt + (clkfreq / speed))
+
+  update:=true
 
 PUB LEDRGB(LEDaddress,_red,_green,_blue) ''Changes RGB values of an LED at a specific address 
   lights[LEDaddress]:=_red<<16+_green<<8+_blue
