@@ -491,9 +491,19 @@ PUB LED_N(LEDaddress,color,waittime) | i
     update:=true
     waitcnt(cnt + (clkfreq / waittime))   
 
-PUB LED_LETTER(letter, baseAddress, color, speed) | length, i, offset
-  ''                        A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z
-  length := lookupz(letter: 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0)
+PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, offset
+  
+  '' Map the ASCII letter value to an alphabet index [0,26]
+  if (letter => 65) AND (letter =< 90)      '' UPPER case input
+    letterNumber := letter - 65
+  elseif (letter => 97) AND (letter =< 122) '' lower case input
+    letterNumber := letter - 97
+  else                                      '' invalid input
+    return 0.0
+
+
+  ''                              A   B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X   Y  Z
+  length := lookupz(letterNumber: 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0)
   repeat i from 0 to (length - 1)
     case (letter)
       "a", "A": offset := lookupz(i: 7, 6, 5, 11, 12, 13, 17, 16, 31, 30, 34, 35, 36, 42, 41, 40, 10, 21, 26, 37)
