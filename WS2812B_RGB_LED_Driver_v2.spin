@@ -54,7 +54,6 @@ VAR
   long LEDs             'Stores the total number of addressable LEDs
   long lights[256]      'Reserve a long for each LED address in the string                           
              ' THIS WILL NEED TO BE INCREASED IF YOU ARE CONTROLLING MORE THAN 256 LEDs!!!
-  byte letterBucket
 
 PUB start(OutputPin,NumberOfLEDs) : okay
 '' Starts RGB LED Strip driver on a cog, returns false if no cog available
