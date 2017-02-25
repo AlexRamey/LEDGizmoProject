@@ -30,9 +30,16 @@ repeat
   }
   rgb.AllOff
   waitcnt(clkfreq + cnt)
-  rgb.LED_X(0,rgb.Intensity(rgb#orange,64), 5)
+  rgb.LED_LETTER("A", 0, rgb.Intensity(rgb#orange,64), 5)
   waitcnt(clkfreq + cnt)
-
+  rgb.LED_LETTER("X", 0, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.AllOff
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("a", 0, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("x", 0, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
 
 repeat
   rgb.AllOff

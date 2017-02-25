@@ -67,7 +67,6 @@ VAR
   word l_locations[13]
   word m_locations[20]
   word n_locations[26]
-  word x_locations[16]
 PUB start(OutputPin,NumberOfLEDs) : okay
 '' Starts RGB LED Strip driver on a cog, returns false if no cog available
 '' Note: Requires at least a 20MHz system clock
@@ -492,31 +491,16 @@ PUB LED_N(LEDaddress,color,waittime) | i
     update:=true
     waitcnt(cnt + (clkfreq / waittime))   
 
-PUB LED_X(LEDaddress,color,waittime) | i
-  x_locations[0] := 0
-  x_locations[1] := 14
-  x_locations[2] := 13
-  x_locations[3] := 19
-  x_locations[4] := 27
-  x_locations[5] := 37
-  x_locations[6] := 38
-  x_locations[7] := 40
-  x_locations[8] := 47
-  x_locations[9] := 33
-  x_locations[10] := 34
-  x_locations[11] := 28
-  x_locations[12] := 20
-  x_locations[13] := 10
-  x_locations[14] := 9
-  x_locations[15] := 7
-  i := 0
-
-  repeat i from 0 to 15
-    lights[LEDaddress + x_locations[i]]:=color
+PUB LED_LETTER(letter, baseAddress, color, speed) | length, i, offset
+  ''                        A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z
+  length := lookupz(letter: 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0)
+  repeat i from 0 to (length - 1)
+    case (letter)
+      "a", "A": offset := lookupz(i: 7, 6, 5, 11, 12, 13, 17, 16, 31, 30, 34, 35, 36, 42, 41, 40, 10, 21, 26, 37)
+      "x", "X": offset := lookupz(i: 0, 14, 13, 19, 27, 37, 38, 40, 47, 33, 34, 28, 20, 10, 9, 7)
+    lights[baseAddress + offset]:=color
     update:=true
-    waitcnt(cnt + (clkfreq / waittime))
-
-
+    waitcnt(cnt + (clkfreq / speed))
 
 PUB LEDRGB(LEDaddress,_red,_green,_blue) ''Changes RGB values of an LED at a specific address 
   lights[LEDaddress]:=_red<<16+_green<<8+_blue
