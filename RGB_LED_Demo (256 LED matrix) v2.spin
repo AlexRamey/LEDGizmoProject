@@ -11,6 +11,7 @@ CON
 
   TotalLEDs=256   '<---set the maximum number of LEDs you wish to control (eg. 30 for 1m strip, 60 for 2m
                  '    strip, 120 for two 2m strips wired in series, etc.) Code has been tested up to 4m
+  LetterOffset=64 '<---set the # of LEDs taken up by a single letter
 OBJ
   rgb : "WS2812B_RGB_LED_Driver_v2"           'Include WS2812B_RGB_LED_Driver object and call it "rgb" for short
 
@@ -29,17 +30,43 @@ repeat
   waitcnt(clkfreq+cnt)
   }
   rgb.AllOff
+  {
   waitcnt(clkfreq + cnt)
   rgb.LED_LETTER("A", 0, rgb.Intensity(rgb#orange,64), 5)
   waitcnt(clkfreq + cnt)
-  rgb.LED_LETTER("X", 0, rgb.Intensity(rgb#orange,64), 5)
+  rgb.LED_LETTER("B", LetterOffset*1, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("C", LetterOffset*2, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("D", LetterOffset*3, rgb.Intensity(rgb#orange,64), 5)
   waitcnt(clkfreq + cnt)
   rgb.AllOff
   waitcnt(clkfreq + cnt)
-  rgb.LED_LETTER("a", 0, rgb.Intensity(rgb#orange,64), 5)
+  rgb.LED_LETTER("E", 0, rgb.Intensity(rgb#orange,64), 5)
   waitcnt(clkfreq + cnt)
-  rgb.LED_LETTER("x", 0, rgb.Intensity(rgb#orange,64), 5)
+  rgb.LED_LETTER("F", LetterOffset*1, rgb.Intensity(rgb#orange,64), 5)
   waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("G", LetterOffset*2, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("H", LetterOffset*3, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.AllOff
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("I", 0, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("J", LetterOffset*1, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("K", LetterOffset*2, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("L", LetterOffset*3, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.AllOff
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("M", 0, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  rgb.LED_LETTER("X", LetterOffset*1, rgb.Intensity(rgb#orange,64), 5)
+  waitcnt(clkfreq + cnt)
+  }
 
 repeat
   rgb.AllOff
