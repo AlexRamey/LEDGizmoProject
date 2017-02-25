@@ -104,8 +104,8 @@ PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, off
   else                                      '' invalid input
     return 0.0
 
-  ''                              A   B   C   D   E   F   G   H   I   J   K   L   M   N  O  P  Q  R  S  T  U  V  W  X   Y  Z
-  length := lookupz(letterNumber: 20, 30, 18, 20, 28, 18, 23, 24, 24, 16, 18, 13, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0)
+  ''                              A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z
+  length := lookupz(letterNumber: 20, 30, 18, 20, 28, 18, 23, 24, 24, 16, 18, 13, 20, 24, 20, 26, 19, 30, 26, 24, 16, 16, 22, 16, 16, 18)
   repeat i from 0 to (length - 1)
     case (letter)
       "a", "A": offset := lookupz(i: 7, 6, 5, 11, 12, 13, 17, 16, 31, 30, 34, 35, 36, 42, 41, 40, 10, 21, 26, 37)
@@ -121,7 +121,20 @@ PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, off
       "k", "K": offset := lookupz(i: 0, 1, 2, 3, 4, 5, 6, 7, 11, 12, 19, 20, 26, 38, 40, 29, 33, 47)
       "l", "L": offset := lookupz(i: 0, 1, 2, 3, 4, 5, 6, 7, 8, 23, 24, 39, 40)
       "m", "M": offset := lookupz(i: 7, 6, 5, 4, 3, 2, 1, 15, 17, 18, 29, 30, 32, 46, 45, 44, 43, 42, 41, 40)
+      "n", "N": offset := lookupz(i: 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 18, 19, 27, 26, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47)
+      "o", "O": offset := lookupz(i: 1, 2, 3, 4, 5, 6, 8, 23, 24, 39, 41, 42, 43, 44, 45, 46, 32, 31, 16, 15)
+      "p", "P": offset := lookupz(i: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 31, 32, 33, 46, 45, 34, 35, 28, 19)
+      "q", "Q": offset := lookupz(i: 16, 14, 2, 3, 4, 5, 9, 23, 24, 38, 42, 43, 44, 45, 33, 31, 20, 26, 40)
+      "r", "R": offset := lookupz(i: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 31, 32, 33, 46, 45, 34, 35, 28, 19, 20, 26, 38, 40)
+      "s", "S": offset := lookupz(i: 45, 46, 32, 31, 16, 15, 1, 2, 13, 18, 12, 19, 28, 20, 27, 36, 26, 37, 42, 41, 39, 24, 23, 8, 6, 5)
+      "t", "T": offset := lookupz(i: 23, 22, 21, 20, 19, 18, 17, 14, 1, 0, 15, 16, 31, 32, 47, 46, 33, 30, 29, 28, 27, 26, 25, 24)
+      "u", "U": offset := lookupz(i: 0, 1, 2, 3, 4, 5, 9, 23, 24, 38, 42, 43, 44, 45, 46, 47)
+      "v", "V": offset := lookupz(i: 0, 1, 13, 12, 11, 10, 22, 23, 24, 25, 37, 36, 35, 34, 46, 47)
+      "w", "W": offset := lookupz(i: 0, 1, 2, 3, 4, 5, 6, 8, 22, 21, 20, 27, 26, 25, 39, 41, 42, 43, 44, 45, 46, 47)
       "x", "X": offset := lookupz(i: 0, 14, 13, 19, 27, 37, 38, 40, 47, 33, 34, 28, 20, 10, 9, 7)
+      "y", "Y": offset := lookupz(i: 0, 1, 13, 12, 20, 21, 22, 23, 24, 25, 26, 27, 35, 34, 46, 47)
+      "z", "Z": offset := lookupz(i: 0, 15, 16, 31, 32, 47, 46, 34, 28, 20, 10, 6, 7, 8, 23, 24, 39, 40)
+
     lights[baseAddress + offset]:=color
     update:=true
     waitcnt(cnt + (clkfreq / speed))
