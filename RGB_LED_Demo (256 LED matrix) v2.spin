@@ -15,7 +15,7 @@ CON
 OBJ
   rgb : "WS2812B_RGB_LED_Driver_v2"           'Include WS2812B_RGB_LED_Driver object and call it "rgb" for short
 
-PUB Demo | i, j, x, maxAddress
+PUB Demo | i, j, x, maxAddress, letter
   rgb.start(0,TotalLEDs)          'Start up RGB LED driver on a new cog, set data pin to be P0,   
                                   ' and specify that there are 60 LEDs in the strip (2 meters)
   maxAddress:=TotalLEDs-1
@@ -30,6 +30,26 @@ repeat
   waitcnt(clkfreq+cnt)
   }
   rgb.AllOff
+  {
+  waitcnt(clkfreq + cnt)
+  rgb.LED_STRING(STRING("ROLL"), 0, LetterOffset, rgb.Intensity(rgb#crimson,128), 10)
+  waitcnt(clkfreq + cnt)
+  repeat i from 0 to 7
+    if (i == 4)
+      waitcnt(clkfreq + cnt)
+      rgb.AllOff
+      waitcnt(clkfreq + cnt)
+    letter := lookupz(i: "R","O","L","L","T","I","D","E")
+    rgb.LED_LETTER(letter, (LetterOffset * i) // TotalLEDs, rgb.Intensity(rgb#crimson,128), 10)
+  }
+  {
+  rgb.LED_STRING(STRING("TIDE"), 0, LetterOffset, rgb.Intensity(rgb#crimson,128), 10)
+  waitcnt(clkfreq + cnt)
+  }
+  {
+  rgb.LED_LETTER("Z", 0, rgb.Intensity(rgb#crimson,128), 100)
+  waitcnt(clkfreq + cnt)
+  }
   {
   waitcnt(clkfreq + cnt)
   rgb.LED_LETTER("A", 0, rgb.Intensity(rgb#orange,64), 5)

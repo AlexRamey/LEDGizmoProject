@@ -45,6 +45,7 @@ CON        'Predefined colors that can be accessed from your code using rgb#cons
  realwhite      = 255<<16+200<<8+255           '%11100000_11001000_11000000
  indigo         = 170                          '%00000000_00111111_01111111
  violet         = 51<<16+215<<8+255            '%01111111_10111111_10111111
+ crimson        = 153<<8                       '%00000000_10011001_00000000
  
 VAR
   long update           'Controls when LED values are sent (its address gets loaded into Cog 1)      
@@ -53,6 +54,7 @@ VAR
   long LEDs             'Stores the total number of addressable LEDs
   long lights[256]      'Reserve a long for each LED address in the string                           
              ' THIS WILL NEED TO BE INCREASED IF YOU ARE CONTROLLING MORE THAN 256 LEDs!!!
+  byte letterBucket
 
 PUB start(OutputPin,NumberOfLEDs) : okay
 '' Starts RGB LED Strip driver on a cog, returns false if no cog available
@@ -137,6 +139,20 @@ PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, off
       waitcnt(cnt + (clkfreq / speed))
 
   update:=true
+
+''' PARAMS: 'letterSize' is the number of cells to allocate for each letter. This should include spacing that follows. Recommended value is 64.
+PUB LED_STRING(ledString, baseAddress, letterSize, color, speed) | size, i
+  size := STRSIZE(ledString)
+  {
+  '' TEST CODE: THIS RUNS, SO IT APPEARS THE STRING IS COMING THROUGH . . .
+  if (size == 4)
+    LED_LETTER("A", 0, color, speed)
+  }
+  {
+  '' FIX ME: This is not working for some reason. I think it's a bit alignment issue
+  repeat i from 0 to (size - 1)
+    LED_LETTER(ledString[i], baseAddress + (i * letterSize), color, speed)
+  }
 
 PUB LEDRGB(LEDaddress,_red,_green,_blue) ''Changes RGB values of an LED at a specific address 
   lights[LEDaddress]:=_red<<16+_green<<8+_blue
