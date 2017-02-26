@@ -73,10 +73,17 @@ PUB start(OutputPin,NumberOfLEDs) : okay
 
   stop                                   'Stop the cog (just in case)
   okay:=cog:=cognew(@RGBdriver,@lights)+1'Start PASM RGB LED Strip driver
-  
+
 PUB stop                                ''Stops the RGB LED Strip driver and releases the cog
   if cog
     cogstop(cog~ - 1)
+
+'' PARAMS: 'speed' is how fast to draw the letter.  Values may range from [0,100], where 100 is max speed.  Specifying 0 creates no wait.
+PUB Wait(speed)
+  if (speed > 0) AND (speed =< 100)
+      '' Only wait if speed != 0
+      update:=true
+      waitcnt(cnt + (clkfreq / speed))
 
 PUB LED(LEDaddress,color)               ''Changes the color of an LED at a specific address 
   lights[LEDaddress]:=color
@@ -132,26 +139,19 @@ PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, off
 
     lights[baseAddress + offset]:=color
 
-    if (speed > 0) AND (speed =< 100)
-      '' Only wait if speed != 0
-      update:=true
-      waitcnt(cnt + (clkfreq / speed))
+    Wait(speed)
 
   update:=true
 
 ''' PARAMS: 'letterSize' is the number of cells to allocate for each letter. This should include spacing that follows. Recommended value is 64.
-PUB LED_STRING(ledString, baseAddress, letterSize, color, speed) | size, i
+PUB LED_STRING(ledString, baseAddress, letterSize, color, speed) | size, i, letterHold
   size := STRSIZE(ledString)
-  {
-  '' TEST CODE: THIS RUNS, SO IT APPEARS THE STRING IS COMING THROUGH . . .
-  if (size == 4)
-    LED_LETTER("A", 0, color, speed)
-  }
-  {
-  '' FIX ME: This is not working for some reason. I think it's a bit alignment issue
+  letterHold := 0
+
   repeat i from 0 to (size - 1)
-    LED_LETTER(ledString[i], baseAddress + (i * letterSize), color, speed)
-  }
+    BYTEMOVE(@letterHold, ledString + i, 1)
+    LED_LETTER(letterHold, baseAddress + (i * letterSize), color, speed)
+  
 
 PUB LEDRGB(LEDaddress,_red,_green,_blue) ''Changes RGB values of an LED at a specific address 
   lights[LEDaddress]:=_red<<16+_green<<8+_blue
@@ -188,7 +188,39 @@ PUB Random(address) | rand,_red,_green,_blue,timer ''Sets LED at specified addre
   rand:=?rand                                        
   _blue:=rand>>24                                    
   lights[address]:=_red<<16+_green<<8+_blue        
-  update:=true                                     
+  update:=true
+
+PUB FlipFromMiddle(speed) | color, i
+  color := 64                                
+  repeat 3
+    repeat i from 0 to maxAddress/2  
+      LED(maxAddress/2+i,color)
+      LED(maxAddress/2-i,color)     
+      Wait(speed) 
+    repeat i from 0 to maxAddress/2
+      LED(i,off)
+      LED(maxAddress-i,off)   
+      Wait(speed)
+    color := color<<8
+
+PUB Snake(color, speed, snakeLength) | i
+  repeat i from 0 to maxAddress
+    LED(i,color)
+    if (i > snakeLength - 1)
+      LED(i - snakeLength, off)
+    Wait(speed)
+  repeat i from maxAddress-snakeLength to maxAddress-1
+    LED(i, off)
+    Wait(speed)
+    
+  repeat i from maxAddress to 0
+    LED(i,color)
+    if (i < maxAddress - snakeLength)
+      LED(snakeLength + i + 1, off)
+    Wait(speed)
+  repeat i from snakeLength to 0
+    LED(i, off)
+    Wait(speed)                                      
    
 DAT
 ''This PASM code sends control data to the RGB LEDs on the strip once the "update" variable is set to

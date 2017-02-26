@@ -30,21 +30,14 @@ repeat
   waitcnt(clkfreq+cnt)
   }
   rgb.AllOff
+  ''rgb.FlipFromMiddle(100)
+  ''rgb.Snake(rgb.Intensity(rgb#orange, 64), 10, 10)
   {
   waitcnt(clkfreq + cnt)
-  rgb.LED_STRING(STRING("ROLL"), 0, LetterOffset, rgb.Intensity(rgb#crimson,128), 10)
+  rgb.LED_STRING(STRING("ROLL"), 0, LetterOffset, rgb.Intensity(rgb#blue,128), 10)
   waitcnt(clkfreq + cnt)
-  repeat i from 0 to 7
-    if (i == 4)
-      waitcnt(clkfreq + cnt)
-      rgb.AllOff
-      waitcnt(clkfreq + cnt)
-    letter := lookupz(i: "R","O","L","L","T","I","D","E")
-    rgb.LED_LETTER(letter, (LetterOffset * i) // TotalLEDs, rgb.Intensity(rgb#crimson,128), 10)
-  }
-  {
-  rgb.LED_STRING(STRING("TIDE"), 0, LetterOffset, rgb.Intensity(rgb#crimson,128), 10)
-  waitcnt(clkfreq + cnt)
+  rgb.AllOff
+  rgb.LED_STRING(STRING("TIDE"), 0, LetterOffset, rgb.Intensity(rgb#orange,128), 10)
   }
   {
   rgb.LED_LETTER("Z", 0, rgb.Intensity(rgb#crimson,128), 100)
@@ -88,9 +81,10 @@ repeat
   waitcnt(clkfreq + cnt)
   }
 
+{
 repeat
   rgb.AllOff
-{                    'You can turn off all of the LEDs at once
+                    'You can turn off all of the LEDs at once
   waitcnt(clkfreq+cnt)
                                  'ROYGBIV Rainbow demo
   rgb.LED(0,rgb#red)              'You can set a specific LED address to a predefined color         
