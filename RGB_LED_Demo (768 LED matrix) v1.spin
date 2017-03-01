@@ -11,6 +11,7 @@ CON
 
   TotalLEDs=768   '<---set the maximum number of LEDs you wish to control (eg. 30 for 1m strip, 60 for 2m
                  '    strip, 120 for two 2m strips wired in series, etc.) Code has been tested up to 4m
+  LetterOffset=64 '<---set the # of LEDs taken up by a single letter
 OBJ
   rgb : "WS2812B_RGB_LED_Driver_v2"           'Include WS2812B_RGB_LED_Driver object and call it "rgb" for short
 
@@ -62,21 +63,26 @@ repeat
   waitcnt(clkfreq/2+cnt)
   }
                                   'Now you are ready to start making fancy patterns...
-  rgb.AllOff                                
+  rgb.AllOff
+  rgb.LED_STRING(STRING(" go hoos go "), 0, LetterOffset, rgb.Intensity(rgb#orange, 64), 25)
+  rgb.Flash(3, 1)
+
+  rgb.Snake(rgb.Intensity(rgb#blue,32), 25, 10)
+                              
   x:=8
   repeat j from 500 to 1000 step 50                              
     repeat i from 0 to maxAddress-x
-      rgb.SetSection(i,i+8,rgb.Intensity(rgb#blue,64))    
+      rgb.SetSection(i,i+8,rgb.Intensity(rgb#blue,32))    
       waitcnt(clkfreq/j+cnt)
       rgb.SetSection(0,maxAddress-x,rgb#off)
     x:=x+8
     repeat i from 0 to maxAddress-x
-      rgb.SetSection(i,i+8,rgb.Intensity(rgb#red,64))
+      rgb.SetSection(i,i+8,rgb.Intensity(rgb#red,32))
       waitcnt(clkfreq/j+cnt)
       rgb.SetSection(0,maxAddress-x,rgb#off) 
     x:=x+8  
     repeat i from 0 to maxAddress-x
-      rgb.SetSection(i,i+8,rgb.Intensity(rgb#green,64))
+      rgb.SetSection(i,i+8,rgb.Intensity(rgb#green,32))
       waitcnt(clkfreq/j+cnt)
       rgb.SetSection(0,maxAddress-x,rgb#off) 
     x:=x+8
@@ -84,18 +90,30 @@ repeat
     rgb.SetSection(i,i+3,rgb#off)
     waitcnt(clkfreq/10+cnt)
 
+  rgb.AllOff
+  rgb.LED_STRING(STRING("gizmologists"), 0, LetterOffset, rgb.Intensity(rgb#blue, 64), 25)
+  rgb.Flash(3, 1)
+
+  rgb.Snake(rgb.Intensity(rgb#orange,32), 25, 10)
+  
   repeat i from maxAddress to 0
-    rgb.LED(i,rgb.Intensity(rgb#white,32))    
+    rgb.LED(i,rgb.Intensity(rgb#white,16))    
     waitcnt(clkfreq/100+cnt)
   repeat i from 0 to maxAddress-1
-    rgb.LED(i,rgb.Intensity(rgb#red,64))    
+    rgb.LED(i,rgb.Intensity(rgb#red,32))    
     waitcnt(clkfreq/100+cnt)
   repeat i from maxAddress to 0
-    rgb.LED(i,rgb.Intensity(rgb#green,64))    
+    rgb.LED(i,rgb.Intensity(rgb#green,32))    
     waitcnt(clkfreq/100+cnt)
   repeat i from 0 to maxAddress/2
-    rgb.LED(i,rgb.Intensity(rgb#blue,64))    
+    rgb.LED(i,rgb.Intensity(rgb#blue,32))    
     waitcnt(clkfreq/100+cnt)
+
+  rgb.AllOff
+  rgb.LED_STRING(STRING("  wahoowa   "), 0, LetterOffset, rgb.Intensity(rgb#orange, 64), 25)
+  rgb.Flash(3, 1)
+
+  rgb.Snake(rgb.Intensity(rgb#blue,32), 25, 10)
 
   x:=64                                'Flip-flop pattern
   repeat 3
@@ -110,8 +128,8 @@ repeat
     x:=x<<8                             'Shift x from blue to green then red
   
   repeat i from 0 to maxAddress/2-1     
-    rgb.LED(maxAddress/2-1-i,rgb.Intensity(rgb#white,64))
-    rgb.LED(maxAddress/2-1+i,rgb.Intensity(rgb#white,64))   
+    rgb.LED(maxAddress/2-1-i,rgb.Intensity(rgb#white,16))
+    rgb.LED(maxAddress/2-1+i,rgb.Intensity(rgb#white,16))   
     waitcnt(clkfreq/100+cnt)
    {
   repeat i from 10 to 100               'Lightning strobe effect
@@ -121,10 +139,10 @@ repeat
     waitcnt(clkfreq/i+cnt)
    }
   repeat 3
-    repeat i from 64 to 0 step 4         'Fade off
+    repeat i from 32 to 0 step 2         'Fade off
       rgb.SetAllColors(i<<16+i<<8+i)
       waitcnt(clkfreq/100+cnt)
-    repeat i from 0 to 64 step 4         'Fade on
+    repeat i from 0 to 32 step 2         'Fade on
       rgb.SetAllColors(i<<16+i<<8+i)
       waitcnt(clkfreq/100+cnt)
   {
@@ -140,15 +158,15 @@ repeat
       rgb.LED(i-1,rgb.Intensity(x,64))                    'And they're certainly not showing any sign that they are slowing!
       waitcnt(clkfreq/j+cnt)            '   (If you are the lest bit epileptic, stop this demo now!) 
   }   
-
+  {
   repeat 10                               'Nice, infinite, peacefully-pulsing, random pattern 
     x:=?cnt>>24                         'This last portion of code was developed by two of my students:                                     
     repeat j from 0 to 255 step 5       '      Taylor Hammelman and Ankit Javia  
       repeat  i from 0 to maxAddress step 2    '            Enjoy!                 
-        rgb.LEDRGB(i,x,255-x,rgb.Intensity(j,32))
-        rgb.LEDRGB(i+1,x,255-x,rgb.Intensity(255-j,32))
+        rgb.LEDRGB(i,x,255-x,rgb.Intensity(j,16))
+        rgb.LEDRGB(i+1,x,255-x,rgb.Intensity(255-j,16))
       waitcnt(clkfreq/30+cnt)
-    
+  }  
 {Copyright (c) 2012 Gavin Garner, University of Virginia                                                                              
 MIT License: Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated             
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the                   

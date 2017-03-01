@@ -46,14 +46,17 @@ CON        'Predefined colors that can be accessed from your code using rgb#cons
  indigo         = 170                          '%00000000_00111111_01111111
  violet         = 51<<16+215<<8+255            '%01111111_10111111_10111111
  crimson        = 153<<8                       '%00000000_10011001_00000000
+
+ NUM_LEDS        = 768
  
 VAR
   long update           'Controls when LED values are sent (its address gets loaded into Cog 1)      
   long maxAddress       'Address of the last LED in the string                                       
   long cog              'Store cog # (so that the cog can be stopped)                                
   long LEDs             'Stores the total number of addressable LEDs
-  long lights[256]      'Reserve a long for each LED address in the string                           
+  long lights[NUM_LEDS]      'Reserve a long for each LED address in the string                           
              ' THIS WILL NEED TO BE INCREASED IF YOU ARE CONTROLLING MORE THAN 256 LEDs!!!
+  long snapshot[NUM_LEDS]
 
 PUB start(OutputPin,NumberOfLEDs) : okay
 '' Starts RGB LED Strip driver on a cog, returns false if no cog available
@@ -81,9 +84,8 @@ PUB stop                                ''Stops the RGB LED Strip driver and rel
 '' PARAMS: 'speed' is how fast to draw the letter.  Values may range from [0,100], where 100 is max speed.  Specifying 0 creates no wait.
 PUB Wait(speed)
   if (speed > 0) AND (speed =< 100)
-      '' Only wait if speed != 0
       update:=true
-      waitcnt(cnt + (clkfreq / speed))
+      waitcnt(cnt + (clkfreq / (speed*2)))
 
 PUB LED(LEDaddress,color)               ''Changes the color of an LED at a specific address 
   lights[LEDaddress]:=color
@@ -190,6 +192,30 @@ PUB Random(address) | rand,_red,_green,_blue,timer ''Sets LED at specified addre
   lights[address]:=_red<<16+_green<<8+_blue        
   update:=true
 
+
+'' PARAMS: 'numFlashes' is the number of times the text goes off and reappears
+'' PARAMS: 'speed' refers to how fast the LEDs flash, with higher numbers faster
+'' NOTE: If speed = 0, then waits 2 seconds
+PUB Flash(numFlashes, speed) | i, localSpeed                    
+  LONGMOVE(@snapshot, @lights, NUM_LEDS)
+  waitcnt(cnt+clkfreq/10)
+  if (speed == 0)
+    localSpeed := 1
+  else
+    localSpeed := speed
+    
+  repeat i from 1 to numFlashes
+    AllOff
+    waitcnt(clkfreq/localSpeed + cnt)
+    if (speed == 0)
+      waitcnt(clkfreq/localSpeed + cnt)
+    LONGMOVE(@lights, @snapshot, NUM_LEDS)
+    update:=true
+    waitcnt(clkfreq/localSpeed + cnt)
+    if (speed == 0)
+      waitcnt(clkfreq/localSpeed + cnt)
+  
+
 PUB FlipFromMiddle(speed) | color, i
   color := 64                                
   repeat 3
@@ -212,7 +238,7 @@ PUB Snake(color, speed, snakeLength) | i
   repeat i from maxAddress-snakeLength to maxAddress-1
     LED(i, off)
     Wait(speed)
-    
+  {  
   repeat i from maxAddress to 0
     LED(i,color)
     if (i < maxAddress - snakeLength)
@@ -220,7 +246,8 @@ PUB Snake(color, speed, snakeLength) | i
     Wait(speed)
   repeat i from snakeLength to 0
     LED(i, off)
-    Wait(speed)                                      
+    Wait(speed)
+  }                                      
    
 DAT
 ''This PASM code sends control data to the RGB LEDs on the strip once the "update" variable is set to
