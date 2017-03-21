@@ -87,6 +87,15 @@ PUB Wait(speed)
       update:=true
       waitcnt(cnt + (clkfreq / (speed*2)))
 
+'' PARAMS: 'x' is the x value for the index
+'' PARAMS: 'y' is the y value for the index
+'' Bottom left is the origin
+PUB XY_TO_INDEX(x, y)
+  if (x // 2 == 0)
+    return (x * 8) + (7 - y)
+  else
+    return (x * 8) + y
+
 PUB LED(LEDaddress,color)               ''Changes the color of an LED at a specific address 
   lights[LEDaddress]:=color
   update:=true
@@ -247,8 +256,62 @@ PUB Snake(color, speed, snakeLength) | i
   repeat i from snakeLength to 0
     LED(i, off)
     Wait(speed)
-  }                                      
-   
+  }
+
+''' Creates a checkerboard pattern from both sides, but offset such that when they meet
+''' in the middle, they start reversing the other side's order
+''' PARAMS: 'color1' is the color of the checkerboard starting at index 0
+''' PARAMS: 'color2' is the color of the checkerboard starting at index 1
+''' PARAMS: 'color3' is the color of the checkerboard that will start at index 0 after 2nd run through
+''' PARAMS: 'color4' is the color of the checkerboard that will start at index 1 after 2nd run through
+PUB Checker(color1, color2, color3, color4, speed) | i                                    
+  repeat i from 0 to maxAddress/2
+    if (i // 2 == 0)
+      LED(i, color1)
+      LED(maxAddress - i, color1)  
+    else
+      LED(i, color2)
+      LED(maxAddress - i, color2)
+
+    Wait(speed)
+
+  repeat i from 383 to 0
+    if (i // 2 == 0)
+      LED(i, color3)
+      LED(maxAddress - i, color3)
+    else
+      LED(i, color4)
+      LED(maxAddress - i, color4)
+
+    Wait(speed)
+
+''' Goes along the edges until it reaches the center with each box having different color parameter
+PUB Box(color1, color2, color3, color4, speed) | c, i, x, y
+  repeat i from 0 to 3
+    if (i == 0)
+      c := color1
+    elseif (i == 1)
+      c := color2
+    elseif (i == 2)
+      c := color3
+    else
+      c := color4
+    repeat x from i to 95-i
+      LED(XY_TO_INDEX(x, 7-i), c)
+      Wait(speed)
+    repeat y from 6-i to i
+      LED(XY_TO_INDEX(95-i, y), c)
+      Wait(speed)
+    repeat x from 95-i to i
+      LED(XY_TO_INDEX(x, i), c)
+      Wait(speed)
+    repeat y from i to 6-i
+      LED(XY_TO_INDEX(i, y), c)
+      Wait(speed)
+
+    if (i == 3)
+      LED(XY_TO_INDEX(3, 3), c)
+      
 DAT
 ''This PASM code sends control data to the RGB LEDs on the strip once the "update" variable is set to
 '' a value other than 0

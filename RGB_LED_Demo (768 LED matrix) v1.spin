@@ -63,7 +63,13 @@ repeat
   waitcnt(clkfreq/2+cnt)
   }
                                   'Now you are ready to start making fancy patterns...
+
   rgb.AllOff
+
+  rgb.Box(rgb.Intensity(rgb#yellow, 64), rgb.Intensity(rgb#magenta, 64), rgb.Intensity(rgb#red, 64), rgb.Intensity(rgb#blue, 64), 50)
+  waitcnt(clkfreq+cnt)
+  rgb.AllOff
+  
   rgb.LED_STRING(STRING(" go hoos go "), 0, LetterOffset, rgb.Intensity(rgb#orange, 64), 25)
   rgb.Flash(3, 1)
 
@@ -95,6 +101,10 @@ repeat
   rgb.Flash(3, 1)
 
   rgb.Snake(rgb.Intensity(rgb#orange,32), 25, 10)
+
+  rgb.Checker(rgb.Intensity(rgb#orange, 64), rgb.Intensity(rgb#blue, 64), rgb.Intensity(rgb#crimson, 64), rgb.Intensity(rgb#turquoise, 64), 50)
+  waitcnt(clkfreq/2+cnt)
+  rgb.AllOff
   
   repeat i from maxAddress to 0
     rgb.LED(i,rgb.Intensity(rgb#white,16))    
