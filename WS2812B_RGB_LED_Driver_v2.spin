@@ -85,7 +85,7 @@ PUB stop                                ''Stops the RGB LED Strip driver and rel
 PUB Wait(speed)
   if (speed > 0) AND (speed =< 100)
       update:=true
-      waitcnt(cnt + (clkfreq / (speed*2)))
+      waitcnt((clkfreq / (speed*2)) + cnt)
 
 '' PARAMS: 'x' is the x value for the index
 '' PARAMS: 'y' is the y value for the index
@@ -104,6 +104,7 @@ PUB LED(LEDaddress,color)               ''Changes the color of an LED at a speci
 '' PARAMS: 'baseAddress' is the cell # of the top left LED in the 6x8(WxH) square of the letter. The Font assumes letters are 6 columns wide
 '' PARAMS: 'color' is the color to make the letter
 '' PARAMS: 'speed' is how fast to draw the letter. Values may range from [0,100], where 100 is max speed. Specifying 0 makes the letter appear all at once.
+'' AUTHOR: Alex Ramey and Evan Typanski
 PUB LED_LETTER(letter, baseAddress, color, speed) | letterNumber, length, i, offset
   
   '' Map the ASCII letter value to an alphabet index [0,26]
@@ -182,7 +183,7 @@ PUB SetAllColors(setcolor) | i          ''Changes the colors of all LEDs to the 
 PUB AllOff | i                          ''Turns all of the LEDs off
   longfill(@lights,0,maxAddress+1) 
   update:=true
-  waitcnt(clkfreq/100+cnt)              'Can't send the next update too soon
+  waitcnt(clkfreq/1000+cnt)              'Can't send the next update too soon
 
 PUB SetSection(AddressStart,AddressEnd,setcolor)  ''Changes colors in a section of LEDs to same color
   longfill(@lights[AddressStart],setcolor,AddressEnd-AddressStart+1)'(@lights[AddressEnd]-@lights[AddressStart])/4) 
@@ -204,6 +205,7 @@ PUB Random(address) | rand,_red,_green,_blue,timer ''Sets LED at specified addre
 
 '' PARAMS: 'numFlashes' is the number of times the text goes off and reappears
 '' PARAMS: 'speed' refers to how fast the LEDs flash, with higher numbers faster
+'' AUTHOR: Alex Ramey and Evan Typanski
 '' NOTE: If speed = 0, then waits 2 seconds
 PUB Flash(numFlashes, speed) | i, localSpeed                    
   LONGMOVE(@snapshot, @lights, NUM_LEDS)
@@ -238,6 +240,7 @@ PUB FlipFromMiddle(speed) | color, i
       Wait(speed)
     color := color<<8
 
+'' AUTHOR: Evan Typanski
 PUB Snake(color, speed, snakeLength) | i
   repeat i from 0 to maxAddress
     LED(i,color)
@@ -258,12 +261,13 @@ PUB Snake(color, speed, snakeLength) | i
     Wait(speed)
   }
 
-''' Creates a checkerboard pattern from both sides, but offset such that when they meet
-''' in the middle, they start reversing the other side's order
-''' PARAMS: 'color1' is the color of the checkerboard starting at index 0
-''' PARAMS: 'color2' is the color of the checkerboard starting at index 1
-''' PARAMS: 'color3' is the color of the checkerboard that will start at index 0 after 2nd run through
-''' PARAMS: 'color4' is the color of the checkerboard that will start at index 1 after 2nd run through
+'' Creates a checkerboard pattern from both sides, but offset such that when they meet
+'' in the middle, they start reversing the other side's order
+'' PARAMS: 'color1' is the color of the checkerboard starting at index 0
+'' PARAMS: 'color2' is the color of the checkerboard starting at index 1
+'' PARAMS: 'color3' is the color of the checkerboard that will start at index 0 after 2nd run through
+'' PARAMS: 'color4' is the color of the checkerboard that will start at index 1 after 2nd run through
+'' AUTHOR: Evan Typanski
 PUB Checker(color1, color2, color3, color4, speed) | i                                    
   repeat i from 0 to maxAddress/2
     if (i // 2 == 0)
@@ -286,6 +290,7 @@ PUB Checker(color1, color2, color3, color4, speed) | i
     Wait(speed)
 
 ''' Goes along the edges until it reaches the center with each box having different color parameter
+''' AUTHOR: Evan Typanski
 PUB Box(color1, color2, color3, color4, speed) | c, i, x, y
   repeat i from 0 to 3
     if (i == 0)
@@ -311,7 +316,95 @@ PUB Box(color1, color2, color3, color4, speed) | c, i, x, y
 
     if (i == 3)
       LED(XY_TO_INDEX(3, 3), c)
-      
+
+'' Creates a stick figure that walks across the LEDs
+'' Man starts at x value 6 - weird stuff happening????????????
+'' FIX THIS? Maybe - it's problem with the all off method's waitcnt call - too long
+'' The man was appearing about halfway through until the wait time was shortened (a lot)
+'' AUTHOR: Evan Typanski
+PUB StickFigure(color, speed) | x, y
+  
+  repeat x from 2 to 93
+    AllOff
+    '' Draw head and body - same throughout
+    
+    LED(XY_TO_INDEX(x-1, 7), color)
+    LED(XY_TO_INDEX(x, 7), color)
+    LED(XY_TO_INDEX(x+1, 7), color)
+    LED(XY_TO_INDEX(x+1, 6), color)
+    LED(XY_TO_INDEX(x+1, 5), color)
+    LED(XY_TO_INDEX(x, 5), color)
+    LED(XY_TO_INDEX(x-1, 5), color)
+    LED(XY_TO_INDEX(x-1, 6), color)
+
+    LED(XY_TO_INDEX(x, 4), color)
+    LED(XY_TO_INDEX(x, 3), color)
+    LED(XY_TO_INDEX(x, 2), color)
+
+    '' Open legs
+    if (x // 4 == 2)
+      LED(XY_TO_INDEX(x+1, 1), color)
+      LED(XY_TO_INDEX(x+2, 0), color)
+      LED(XY_TO_INDEX(x-1, 1), color)
+      LED(XY_TO_INDEX(x-2, 0), color)
+
+    '' Slightly closed legs
+    elseif (x // 4 == 3 OR x // 4 == 1)
+      LED(XY_TO_INDEX(x+1, 1), color)
+      LED(XY_TO_INDEX(x+1, 0), color)
+      LED(XY_TO_INDEX(x-1, 1), color)
+      LED(XY_TO_INDEX(x-1, 0), color)
+
+    '' Closed legs
+    else
+      LED(XY_TO_INDEX(x, 1), color)
+      LED(XY_TO_INDEX(x, 0), color)
+
+    Wait(speed)
+
+  '' Stuff used to try to fix
+  {  
+  LED(XY_TO_INDEX(5, 5), color)
+  waitcnt(clkfreq*3 + cnt)
+  repeat x from 2 to 93
+    AllOff
+    LED(XY_TO_INDEX(x-1, 7), color)
+    LED(XY_TO_INDEX(x, 7), color)
+    LED(XY_TO_INDEX(x+1, 7), color)
+    LED(XY_TO_INDEX(x+1, 6), color)
+    LED(XY_TO_INDEX(x+1, 5), color)
+    LED(XY_TO_INDEX(x, 5), color)
+    LED(XY_TO_INDEX(x-1, 5), color)
+    LED(XY_TO_INDEX(x-1, 6), color)
+
+    LED(XY_TO_INDEX(x, 4), color)
+    LED(XY_TO_INDEX(x, 3), color)
+    LED(XY_TO_INDEX(x, 2), color)
+
+    '' Open legs
+    if (x // 4 == 2)
+      LED(XY_TO_INDEX(x+1, 1), color)
+      LED(XY_TO_INDEX(x+2, 0), color)
+      LED(XY_TO_INDEX(x-1, 1), color)
+      LED(XY_TO_INDEX(x-2, 0), color)
+
+    '' Slightly closed legs
+    elseif (x // 4 == 3 OR x // 4 == 1)
+      LED(XY_TO_INDEX(x+1, 1), color)
+      LED(XY_TO_INDEX(x+1, 0), color)
+      LED(XY_TO_INDEX(x-1, 1), color)
+      LED(XY_TO_INDEX(x-1, 0), color)
+
+    '' Closed legs
+    else
+      LED(XY_TO_INDEX(x, 1), color)
+      LED(XY_TO_INDEX(x, 0), color)
+
+    Wait(speed)
+    Wait(0)
+  }    
+    
+
 DAT
 ''This PASM code sends control data to the RGB LEDs on the strip once the "update" variable is set to
 '' a value other than 0
