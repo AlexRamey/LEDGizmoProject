@@ -289,8 +289,8 @@ PUB Checker(color1, color2, color3, color4, speed) | i
 
     Wait(speed)
 
-''' Goes along the edges until it reaches the center with each box having different color parameter
-''' AUTHOR: Evan Typanski
+'' Goes along the edges until it reaches the center with each box having different color parameter
+'' AUTHOR: Evan Typanski
 PUB Box(color1, color2, color3, color4, speed) | c, i, x, y
   repeat i from 0 to 3
     if (i == 0)
@@ -318,9 +318,7 @@ PUB Box(color1, color2, color3, color4, speed) | c, i, x, y
       LED(XY_TO_INDEX(3, 3), c)
 
 '' Creates a stick figure that walks across the LEDs
-'' Man starts at x value 6 - weird stuff happening????????????
-'' FIX THIS? Maybe - it's problem with the all off method's waitcnt call - too long
-'' The man was appearing about halfway through until the wait time was shortened (a lot)
+'' The man starts at column 5 or so - weird, but unnoticeable
 '' AUTHOR: Evan Typanski
 PUB StickFigure(color, speed) | x, y
   
@@ -361,49 +359,28 @@ PUB StickFigure(color, speed) | x, y
       LED(XY_TO_INDEX(x, 0), color)
 
     Wait(speed)
+                 
+'' Triangles interlocking
+'' AUTHOR: Evan Typanski
+PUB Triangle(color1, color2, speed) | i, x, y
+  repeat i from 0 to 6
+    repeat x from 0 to 14
+      if ( x < 7)
+        y := 7 - x
+      else
+        y := x - 7
 
-  '' Stuff used to try to fix
-  {  
-  LED(XY_TO_INDEX(5, 5), color)
-  waitcnt(clkfreq*3 + cnt)
-  repeat x from 2 to 93
-    AllOff
-    LED(XY_TO_INDEX(x-1, 7), color)
-    LED(XY_TO_INDEX(x, 7), color)
-    LED(XY_TO_INDEX(x+1, 7), color)
-    LED(XY_TO_INDEX(x+1, 6), color)
-    LED(XY_TO_INDEX(x+1, 5), color)
-    LED(XY_TO_INDEX(x, 5), color)
-    LED(XY_TO_INDEX(x-1, 5), color)
-    LED(XY_TO_INDEX(x-1, 6), color)
+      LED(XY_TO_INDEX(x + i*14, y), color1)
 
-    LED(XY_TO_INDEX(x, 4), color)
-    LED(XY_TO_INDEX(x, 3), color)
-    LED(XY_TO_INDEX(x, 2), color)
+      if (x < 7)
+        y := x
+      else
+        y := 14 - x
 
-    '' Open legs
-    if (x // 4 == 2)
-      LED(XY_TO_INDEX(x+1, 1), color)
-      LED(XY_TO_INDEX(x+2, 0), color)
-      LED(XY_TO_INDEX(x-1, 1), color)
-      LED(XY_TO_INDEX(x-2, 0), color)
-
-    '' Slightly closed legs
-    elseif (x // 4 == 3 OR x // 4 == 1)
-      LED(XY_TO_INDEX(x+1, 1), color)
-      LED(XY_TO_INDEX(x+1, 0), color)
-      LED(XY_TO_INDEX(x-1, 1), color)
-      LED(XY_TO_INDEX(x-1, 0), color)
-
-    '' Closed legs
-    else
-      LED(XY_TO_INDEX(x, 1), color)
-      LED(XY_TO_INDEX(x, 0), color)
-
-    Wait(speed)
-    Wait(0)
-  }    
-    
+      LED(XY_TO_INDEX(x + i*14, y), color2)
+      
+      Wait(speed)
+          
 
 DAT
 ''This PASM code sends control data to the RGB LEDs on the strip once the "update" variable is set to

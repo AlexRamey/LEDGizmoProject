@@ -66,6 +66,10 @@ repeat
 
   rgb.AllOff
 
+  rgb.Triangle(rgb.Intensity(rgb#orange, 64), rgb.Intensity(rgb#blue, 64), 10)
+  waitcnt(clkfreq + cnt)
+  rgb.AllOff
+
   rgb.Checker(rgb.Intensity(rgb#orange, 64), rgb.Intensity(rgb#blue, 64), rgb.Intensity(rgb#crimson, 64), rgb.Intensity(rgb#turquoise, 64), 50)
   waitcnt(clkfreq/2+cnt)
   rgb.AllOff
