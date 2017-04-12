@@ -362,26 +362,129 @@ PUB StickFigure(color, speed) | x, y
                  
 '' Triangles interlocking
 '' AUTHOR: Evan Typanski
-PUB Triangle(color1, color2, speed) | i, x, y
-  repeat i from 0 to 6
-    repeat x from 0 to 14
-      if ( x < 7)
-        y := 7 - x
-      else
-        y := x - 7
+PUB Triangle(color1, color2, speed) | i, j, x, y
+  repeat j from 0 to 5
+    repeat i from 0 to 6
+      repeat x from 0 to 14
+        if ( x < 7)
+          y := 7 - x
+        else
+          y := x - 7
 
-      LED(XY_TO_INDEX(x + i*14, y), color1)
+        LED(XY_TO_INDEX(x + i*14 + j, y), color1)
 
-      if (x < 7)
-        y := x
-      else
-        y := 14 - x
+        if (x < 7)
+          y := x
+        else
+          y := 14 - x
 
-      LED(XY_TO_INDEX(x + i*14, y), color2)
+        LED(XY_TO_INDEX(x + i*14 + j, y), color2)
       
-      Wait(speed)
+        Wait(speed)
+
+'' Increasing speed stacking pattern
+'' No speed for this one: cannot change
+PUB Stack(color1, color2, color3) | i, j, x
+                              
+  x:=8
+  repeat j from 500 to 1000 step 50                              
+    repeat i from 0 to maxAddress-x
+      SetSection(i,i+8, color1)    
+      waitcnt(clkfreq/j+cnt)
+      SetSection(0,maxAddress-x,off)
+    x:=x+8
+    repeat i from 0 to maxAddress-x
+      SetSection(i,i+8,color2)
+      waitcnt(clkfreq/j+cnt)
+      SetSection(0,maxAddress-x,off) 
+    x:=x+8  
+    repeat i from 0 to maxAddress-x
+      SetSection(i,i+8,color3)
+      waitcnt(clkfreq/j+cnt)
+      SetSection(0,maxAddress-x,off) 
+    x:=x+8
+  repeat i from maxAddress-x to maxAddress step 3
+    SetSection(i,i+3,off)
+    waitcnt(clkfreq/10+cnt)
+
           
 
+PUB FillBackAndForth(color1, color2, color3, color4, speed) | i
+  repeat i from maxAddress to 0
+    LED(i,color1)    
+    Wait(speed)
+  repeat i from 0 to maxAddress-1
+    LED(i,color2)    
+    Wait(speed)
+  repeat i from maxAddress to 0
+    LED(i,color3)    
+    Wait(speed)
+  repeat i from 0 to maxAddress-1
+    LED(i,color4)    
+    Wait(speed)
+
+PUB FlipFlop(color1, color2, color3, speed) | i, j, color
+  repeat j from 0 to 3
+    if (j == 0)
+      color := color1
+    elseif (j == 1)
+      color := color2
+    elseif (j == 2)
+      color := color3
+    repeat i from 0 to maxAddress/2  
+      LED(maxAddress/2+i,color)
+      LED(maxAddress/2-i,color)     
+      Wait(speed)
+    repeat i from 0 to maxAddress/2
+      LED(i,off)
+      LED(maxAddress-i,off)   
+      Wait(speed)
+
+'' Warning: VERY bright, use at own risk
+'' Nice, infinite, peacefully-pulsing, random pattern
+'' Last portion developed by:
+'' AUTHOR: Taylor Hammelman and Ankit Javia
+PUB Pulse | x, i, j
+  repeat 10                               
+    x:=?cnt>>24                                                            
+    repeat j from 0 to 255 step 5       
+      repeat  i from 0 to maxAddress step 2                    
+        LEDRGB(i,x,255-x,Intensity(j,16))
+        LEDRGB(i+1,x,255-x,Intensity(255-j,16))
+      waitcnt(clkfreq/30+cnt)
+
+'' Fills LEDs then flashes them
+'' May be very bright
+'' Can only use white
+PUB FadeInOut(speed) | i
+  repeat i from 0 to maxAddress/2-1     
+    LED(maxAddress/2-1-i, Intensity(white, 8))
+    LED(maxAddress/2-1+i, Intensity(white, 8))   
+    Wait(speed)
+   
+  repeat 3
+    repeat i from 8 to 0 step 1         'Fade off
+      SetAllColors(i<<16+i<<8+i)
+      Wait(speed/2)
+    repeat i from 0 to 8 step 1         'Fade on
+      SetAllColors(i<<16+i<<8+i)
+      Wait(speed/2)
+
+'' This is very bright.  Therefore, it is unused.
+'' Picks random color and makes lights that color and fills it
+'' Some other stuff too
+PUB RandomPingPong | i, j, x
+  repeat j from 50 to 4000 step 50      'Random-color, ping-pong pattern
+    Intensity(Random(0),16)
+    repeat i from 0 to maxAddress 
+      x:=GetColor(i)                'You can retrieve the color value of any LED
+      LED(i+1,x)
+      waitcnt(clkfreq/j+cnt)
+    Random(maxAddress)              'There's no earthly way of knowing which direction they are going
+    repeat i from maxAddress to 1       '      ...There's no knowing where they're rowing... 
+      x:=GetColor(i)                'The danger must be growing cause the rowers keep on rowing       
+      LED(i-1,Intensity(x,16))                    'And they're certainly not showing any sign that they are slowing!
+      waitcnt(clkfreq/j+cnt)            '   (If you are the lest bit epileptic, stop this demo now!) 
 DAT
 ''This PASM code sends control data to the RGB LEDs on the strip once the "update" variable is set to
 '' a value other than 0
