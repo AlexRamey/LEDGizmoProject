@@ -39,16 +39,18 @@ repeat
   rgb.AllOff
 
   rgb.FadeInOut(60)
-
   rgb.AllOff
+  
   rgb.LED_STRING(STRING("gizmologists"), 0, LetterOffset, rgb.Intensity(rgb#blue, 64), 25)
   rgb.Flash(3, 1)
 
   rgb.Snake(rgb.Intensity(rgb#orange,32), 25, 10)
 
   rgb.Stack(rgb.Intensity(rgb#red,32), rgb.Intensity(rgb#cyan,16), rgb.Intensity(rgb#white,8))
+  rgb.AllOff
   
   rgb.FlipFlop(rgb.Intensity(rgb#red, 32), rgb.Intensity(rgb#blue, 32), rgb.Intensity(rgb#green, 32), 65)
+  rgb.AllOff
  
   rgb.AllOff
   rgb.LED_STRING(STRING("  wahoowa   "), 0, LetterOffset, rgb.Intensity(rgb#orange, 64), 25)
@@ -56,8 +58,10 @@ repeat
 
   rgb.Snake(rgb.Intensity(rgb#blue,32), 25, 10)
 
-   rgb.FillBackAndForth(rgb.Intensity(rgb#white, 8), rgb.Intensity(rgb#yellow, 16), rgb.Intensity(rgb#green, 32), rgb.Intensity(rgb#crimson, 32), 75)
-
+  rgb.FillBackAndForth(rgb.Intensity(rgb#white, 8), rgb.Intensity(rgb#yellow, 16), rgb.Intensity(rgb#green, 32), rgb.Intensity(rgb#crimson, 32), 75)
+  waitcnt(clkfreq/2+cnt)
+  rgb.AllOff
+  
   rgb.Box(rgb.Intensity(rgb#yellow, 16), rgb.Intensity(rgb#magenta, 16), rgb.Intensity(rgb#red, 32), rgb.Intensity(rgb#blue, 32), 50)
   waitcnt(clkfreq+cnt)
   rgb.AllOff

@@ -363,7 +363,7 @@ PUB StickFigure(color, speed) | x, y
 '' Triangles interlocking
 '' AUTHOR: Evan Typanski
 PUB Triangle(color1, color2, speed) | i, j, x, y
-  repeat j from 0 to 5
+  repeat j from 0 to 6
     repeat i from 0 to 6
       repeat x from 0 to 14
         if ( x < 7)
