@@ -16,7 +16,8 @@ OBJ
   rgb : "WS2812B_RGB_LED_Driver_v2"           'Include WS2812B_RGB_LED_Driver object and call it "rgb" for short
 
 PUB Demo | i, j, x, maxAddress
-  rgb.start(0,TotalLEDs)          'Start up RGB LED driver on a new cog, set data pin to be P0,   
+  'rgb.start(0,TotalLEDs, -1, -1)  'Start up RGB LED driver on a new cog, set data pin to be P0, 
+  rgb.start(0,TotalLEDs, 5, 6)    'Start up RGB LED driver on a new cog, set data pin to be P0,   
                                   ' and specify that there are 60 LEDs in the strip (2 meters)
   maxAddress:=TotalLEDs-1         'LED addresses start with zero so 59 will be the maximum address
 repeat
@@ -46,7 +47,7 @@ repeat
 
   rgb.Snake(rgb.Intensity(rgb#orange,32), 25, 10)
 
-  rgb.Stack(rgb.Intensity(rgb#red,32), rgb.Intensity(rgb#cyan,16), rgb.Intensity(rgb#white,8))
+  rgb.StackOn(rgb.Intensity(rgb#red,32), rgb.Intensity(rgb#cyan,16), rgb.Intensity(rgb#white,8))
   rgb.AllOff
   
   rgb.FlipFlop(rgb.Intensity(rgb#red, 32), rgb.Intensity(rgb#blue, 32), rgb.Intensity(rgb#green, 32), 65)
